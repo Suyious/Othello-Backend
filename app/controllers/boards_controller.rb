@@ -3,7 +3,7 @@ class BoardsController < ApplicationController
 
   # GET /boards
   def index
-    @boards = Board.all
+    @boards = Board.order(updated_at: :desc)
 
     render json: @boards
   end
