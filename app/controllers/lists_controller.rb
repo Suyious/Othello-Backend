@@ -1,9 +1,9 @@
 class ListsController < ApplicationController
   before_action :set_list, only: %i[ show update destroy ]
 
-  # GET /lists
+  # GET /boards/:id/lists
   def index
-    @lists = List.order(updated_at: :desc)
+    @lists = List.where(board: params[:board_id]).order(updated_at: :desc)
 
     render json: @lists
   end
@@ -13,9 +13,12 @@ class ListsController < ApplicationController
     render json: @list
   end
 
-  # POST /lists
+  # POST boards/:board_id/lists
   def create
-    @list = List.new(list_params)
+    board = Board.find(params[:board_id])
+
+    # Create a new list associated with the board
+    @list = board.lists.new(list_params)
 
     if @list.save
       render json: @list, status: :created, location: @list
@@ -46,6 +49,6 @@ class ListsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def list_params
-      params.require(:list).permit(:title, :board_id)
+      params.require(:list).permit(:title, :status, :board_id)
     end
 end
